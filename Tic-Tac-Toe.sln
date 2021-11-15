@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tic-Tac-Toe", "Tic-Tac-Toe\Tic-Tac-Toe.csproj", "{A5DF76F5-C17B-4264-A1E3-30EEA3CC5C4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTTService", "TTTService\TTTService.csproj", "{C60B58EE-10AE-495B-9A2F-3281BBDDF90B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TTTService", "TTTService\TTTService.csproj", "{C60B58EE-10AE-495B-9A2F-3281BBDDF90B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTTOnline", "TTTOnline\TTTOnline.csproj", "{7FEF24EF-F610-4063-A420-3AD02AEFCE17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{C60B58EE-10AE-495B-9A2F-3281BBDDF90B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C60B58EE-10AE-495B-9A2F-3281BBDDF90B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C60B58EE-10AE-495B-9A2F-3281BBDDF90B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FEF24EF-F610-4063-A420-3AD02AEFCE17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FEF24EF-F610-4063-A420-3AD02AEFCE17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FEF24EF-F610-4063-A420-3AD02AEFCE17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FEF24EF-F610-4063-A420-3AD02AEFCE17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

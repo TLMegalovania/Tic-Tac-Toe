@@ -44,8 +44,8 @@ internal class GoBangBoard
     /// <returns></returns>
     public GoBangTurnType this[int i, int j] => _board[i][j];
 
-    public GoBangTurnType this[Index x, Index y] => _board[x][y];
-    public GoBangTurnType[][] this[Range x, Range y] => _board[x][y];
+    //public GoBangTurnType this[Index x, Index y] => _board[x][y];
+    //public GoBangTurnType[][] this[Range x, Range y] => _board[x][y];
 
     /// <summary>
     /// 记得转换为 2 until n+2 。
@@ -61,7 +61,7 @@ internal class GoBangBoard
         {
             GoBangTurnType.White => GoBangTurnType.Black,
             GoBangTurnType.Black => GoBangTurnType.White,
-            _ => throw new InvalidOperationException()
+            _ => throw new NeverException("Nextturn type invalid.")
         };
         return true;
     }

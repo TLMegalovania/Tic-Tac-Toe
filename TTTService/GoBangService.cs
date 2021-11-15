@@ -44,10 +44,11 @@ public class GoBangService
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="board"></param>
-    /// <returns></returns>
+    /// <returns>Winning side.</returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public GoBangTurnType Judge(int x, int y)
     {
-        if (!board.Move(x, y)) return GoBangTurnType.Null;
+        if (!board.Move(x, y)) throw new InvalidOperationException("Coordinate invalid.");
         var turn = board[x, y];
         int lines = 0;
         for (int direction = 0; direction < 4; direction++)
@@ -90,7 +91,7 @@ public class GoBangService
             {
                 GoBangTurnType.Black => GoBangTurnType.White,
                 GoBangTurnType.White => GoBangTurnType.Black,
-                _ => throw new NotImplementedException()
+                _ => throw new NeverException("turn type invalid.")
             };
         }
         return turn;
