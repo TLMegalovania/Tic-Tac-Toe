@@ -8,15 +8,12 @@ namespace TTTOnline;
 
 public class GoBangClient
 {
-    private readonly TcpClient tcpClient;
+    private TcpClient? tcpClient;
     private NetworkStream? stream;
     private GoBangService? goBang;
-    public int TimeoutMilliSec { get; set; } = 5000;
 
-    public GoBangClient()
-    {
-        tcpClient = new(AddressFamily.InterNetworkV6);
-    }
+    public GoBangClient() { }
+
     internal GoBangClient(BoardMessage board, TcpClient tcpClient)
     {
         goBang = new(board.Rows, board.Cols);
@@ -24,32 +21,20 @@ public class GoBangClient
         stream = tcpClient.GetStream();
     }
 
-    private CancellationToken GetCts()
+    public async Task<Task<MoveResult>> ConnectAsync(IPAddress ip, int port, CancellationToken cancellationToken = default)
     {
-        CancellationTokenSource tokenSource = new();
-        async Task cancel()
-        {
-            await Task.Delay(TimeoutMilliSec);
-            tokenSource.Cancel();
-            tokenSource.Dispose();
-        }
-        _ = cancel();
-        return tokenSource.Token;
-    }
-
-    public async Task<MoveResult> ConnectAsync(string host, int port)
-    {
-        await tcpClient.ConnectAsync(IPAddress.Parse(host).MapToIPv6(), port, GetCts());
+        tcpClient = new(ip.AddressFamily);
+        await tcpClient.ConnectAsync(ip, port, cancellationToken);
         stream = tcpClient.GetStream();
-        var board = await JsonSerializer.DeserializeAsync<BoardMessage>(stream, cancellationToken: GetCts());
+        var board = await JsonSerializer.DeserializeAsync<BoardMessage>(stream, cancellationToken: cancellationToken);
         if (board == null) throw new NeverException("Receive null board.");
         goBang = new(board.Rows, board.Cols);
-        return await ReceiveMoveAsync();
+        return ReceiveMoveAsync();
     }
 
     private async Task<MoveResult> ReceiveMoveAsync()
     {
-        if (goBang == null || stream == null) throw new NeverException("GoBang or stream null when receive.");
+        if (goBang == null || stream == null || tcpClient == null) throw new NeverException("GoBang or stream null when receive.");
         var remoteMove = await JsonSerializer.DeserializeAsync<MoveMessage>(stream);
         if (remoteMove == null) throw new NeverException("Receive null move.");
         try
@@ -65,7 +50,7 @@ public class GoBangClient
     }
     public async Task<MoveResult> MoveAsync(int x, int y)
     {
-        if (goBang == null || stream == null) throw new InvalidOperationException("Client not connected.");
+        if (goBang == null || stream == null || tcpClient == null) throw new InvalidOperationException("Client not connected.");
         await JsonSerializer.SerializeAsync<MoveMessage>(stream, new(x, y));
         var winner = goBang.Judge(x, y);
         if (winner == GoBangTurnType.Null) return await ReceiveMoveAsync();

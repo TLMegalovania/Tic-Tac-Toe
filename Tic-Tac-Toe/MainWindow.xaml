@@ -5,8 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tic_Tac_Toe"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="Tic-Tac-Toe" Height="331" Width="600" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+    <Canvas>
+        <Button Content="Host a Game" Canvas.Left="206" Canvas.Top="53" Width="188" Height="53" FontSize="24" TabIndex="0" Click="CreateHost"/>
+        <Label Content="or" Canvas.Left="286" Canvas.Top="127" FontSize="18"/>
+        <Label Content="IP" Canvas.Left="44" Canvas.Top="176" FontSize="18"/>
+        <TextBox x:Name="ipBox" Canvas.Left="75" Canvas.Top="180" Width="319" FontSize="18" TabIndex="1"/>
+        <Label Content="Port" Canvas.Left="415" Canvas.Top="176" FontSize="18"/>
+        <TextBox x:Name="portBox" Canvas.Left="466" Canvas.Top="180" Width="79" FontSize="18" TabIndex="2"/>
+        <Button Content="Conntect to a Host" Canvas.Left="184" Canvas.Top="229" Width="232" Height="53" FontSize="24" TabIndex="3" IsDefault="True" Click="ConnectHost"/>
+        <MediaElement Height="100" Canvas.Left="-344" Canvas.Top="-74" Width="100"/>
+    </Canvas>
 </Window>

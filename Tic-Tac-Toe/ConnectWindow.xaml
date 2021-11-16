@@ -1,0 +1,24 @@
+﻿<Window x:Class="Tic_Tac_Toe.ConnectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Tic_Tac_Toe"
+        mc:Ignorable="d"
+        Title="Connecting..." Height="231" Width="451" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterScreen">
+    <StackPanel>
+        <Canvas x:Name="hostCanvas" Height="131" MinWidth="400" Visibility="Visible">
+            <Label Content="Your IP addressses:" Canvas.Left="10"/>
+            <ScrollViewer Height="102" Width="306" Canvas.Left="135" VerticalScrollBarVisibility="Auto">
+                <ListBox x:Name="ipList"/>
+            </ScrollViewer>
+            <Label Content="Your IPv4 port:" Canvas.Left="35" Canvas.Top="106"/>
+            <Label x:Name="port4Label" Content="0" Canvas.Left="135" Canvas.Top="106"/>
+            <Label Content="Your IPv6 port:" Canvas.Left="240" Canvas.Top="107"/>
+            <Label x:Name="port6Label" Content="0" Canvas.Left="348" Canvas.Top="107"/>
+        </Canvas>
+        <ProgressBar Height="32" Width="400" Margin="0,10,0,0" IsIndeterminate="True"/>
+        <Button Width="60" HorizontalAlignment="Center" Margin="0,10,0,15" IsCancel="True" Content="Cancel" Click="CancelConnect"/>
+
+    </StackPanel>
+</Window>

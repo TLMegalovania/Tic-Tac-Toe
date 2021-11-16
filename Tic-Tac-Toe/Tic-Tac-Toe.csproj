@@ -8,4 +8,22 @@
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\black.gif" />
+    <None Remove="Images\white.gif" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\black.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\white.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TTTOnline\TTTOnline.csproj" />
+  </ItemGroup>
 </Project>

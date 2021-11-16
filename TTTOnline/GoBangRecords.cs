@@ -2,9 +2,9 @@
 
 namespace TTTOnline;
 
-public record MoveResult(int X, int Y, GoBangTurnType Turn)
+public record MoveResult(int X, int Y, GoBangTurnType Winner)
 {
-    internal MoveResult(MoveMessage message, GoBangTurnType turn) : this(message.X, message.Y, turn) { }
+    internal MoveResult(MoveMessage message, GoBangTurnType winner) : this(message.X, message.Y, winner) { }
 }
 public record BoardMessage(int Rows, int Cols);
 internal record MoveMessage(int X, int Y)
