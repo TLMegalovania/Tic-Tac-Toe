@@ -39,7 +39,6 @@ public class GoBangService
 
     /// <summary>
     /// 返回胜利方。
-    /// 记得换成n+2。
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
@@ -48,7 +47,9 @@ public class GoBangService
     /// <exception cref="InvalidOperationException"></exception>
     public GoBangTurnType Judge(int x, int y)
     {
-        if (!board.Move(x, y)) throw new InvalidOperationException("Coordinate invalid.");
+        x += 2;
+        y += 2;
+        if (!board.Move(x, y)) throw new CheatException();
         var turn = board[x, y];
         int lines = 0;
         for (int direction = 0; direction < 4; direction++)
@@ -87,12 +88,7 @@ public class GoBangService
         }
         else if (lines == 1)
         {
-            return turn switch
-            {
-                GoBangTurnType.Black => GoBangTurnType.White,
-                GoBangTurnType.White => GoBangTurnType.Black,
-                _ => throw new NeverException("turn type invalid.")
-            };
+            return turn.Opposite();
         }
         return turn;
     }

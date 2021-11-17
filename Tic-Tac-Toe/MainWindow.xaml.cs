@@ -25,8 +25,8 @@ public partial class MainWindow : Window
         var endpoint6 = (IPEndPoint)server.Listener6.LocalEndpoint;
         var response = new ConnectWindow(clientTask, endpoint4.Port, endpoint6.Port, source).ShowDialog();
         if (response is null or false) return;
-        Close();
         new GameWindow(clientTask.Result).Show();
+        Close();
     }
 
     private void ConnectHost(object sender, RoutedEventArgs e)
@@ -46,7 +46,7 @@ public partial class MainWindow : Window
         var connectTask = client.ConnectAsync(address, port, source.Token);
         var response = new ConnectWindow(connectTask, source).ShowDialog();
         if (response is null or false) return;
+        new GameWindow(client, client.ReceiveMoveAsync()).Show();
         Close();
-        new GameWindow(client, connectTask.Result).Show();
     }
 }

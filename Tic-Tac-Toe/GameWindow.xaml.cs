@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using TTTOnline;
@@ -14,74 +14,76 @@ namespace Tic_Tac_Toe;
 public partial class GameWindow : Window
 {
     private readonly GoBangClient _client;
+    private readonly ImageBrush _blackBrush, _whiteBrush;
     private readonly BitmapImage _blackImage, _whiteImage;
     private GoBangTurnType thisTurn;
     private readonly GoBangTurnType yourTurn;
-    private readonly Image[,] _board;
+    private readonly (Button,bool)[,] _board;
 
-    public GameWindow(GoBangClient client)
+    public GameWindow(GoBangClient client, bool isClient = false)
     {
         InitializeComponent();
         _client = client;
         _blackImage = new(new("./Images/black.gif", UriKind.Relative));
         _whiteImage = new(new("./Images/white.gif", UriKind.Relative));
-        thisTurn = yourTurn = GoBangTurnType.Black;
-        _board = new Image[5, 5];
+        _blackBrush = new(_blackImage);
+        _whiteBrush = new(_whiteImage);
+        thisTurn = GoBangTurnType.Black;
+        yourTurn = isClient ? GoBangTurnType.White : GoBangTurnType.Black;
+        _board = new (Button,bool)[5, 5];
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 5; j++)
             {
-                Image img = new();
-                img.MouseLeftButtonDown += ClickBoard;
-                _board[i, j] = img;
-                Grid.SetRow(img, i);
-                Grid.SetColumn(img, j);
-                boardGrid.Children.Add(img);
+                Button btn = new();
+                btn.Click += ClickBoard;
+                _board[i, j] = (btn,true);
+                Grid.SetRow(btn, i);
+                Grid.SetColumn(btn, j);
+                boardGrid.Children.Add(btn);
             }
         }
         thisImage.Source = _blackImage;
-        yourImage.Source = _blackImage;
+        yourImage.Source = isClient ? _whiteImage : _blackImage;
     }
 
-    public GameWindow(GoBangClient client, Task<MoveResult> moveTask) : this(client)
+    public GameWindow(GoBangClient client, Task<MoveResult?> moveTask) : this(client, true)
     {
-        yourTurn = GoBangTurnType.White;
-        yourImage.Source = _whiteImage;
         moveTask.ContinueWith(ContinueTask);
     }
 
-    private void ClickBoard(object sender, MouseButtonEventArgs e)
+    private void ClickBoard(object sender, RoutedEventArgs e)
     {
         if (sender is not UIElement ele) throw new NeverException("Not clicking UIElement.");
+        if (thisTurn != yourTurn) return;
         int row = Grid.GetRow(ele), col = Grid.GetColumn(ele);
+        if (!_board[row, col].Item2) return;
         ShowMove(row, col);
         _client.MoveAsync(row, col).ContinueWith(ContinueTask);
     }
 
     private void ShowMove(int x, int y)
     {
-        if (_board[x, y].Source != null)
-            switch (thisTurn)
-            {
-                case GoBangTurnType.Black:
-                    _board[x, y].Source = _blackImage;
-                    thisTurn = GoBangTurnType.White;
-                    thisImage.Source = _blackImage;
-                    break;
-                case GoBangTurnType.White:
-                    _board[x, y].Source = _whiteImage;
-                    thisTurn = GoBangTurnType.Black;
-                    thisImage.Source = _whiteImage;
-                    break;
-                default:
-                    throw new NeverException("Invalid this turn.");
-            }
-
+        _board[x, y].Item2 = false;
+        switch (thisTurn)
+        {
+            case GoBangTurnType.Black:
+                _board[x, y].Item1.Background = _blackBrush;
+                thisTurn = GoBangTurnType.White;
+                thisImage.Source = _whiteImage;
+                break;
+            case GoBangTurnType.White:
+                _board[x, y].Item1.Background = _whiteBrush;
+                thisTurn = GoBangTurnType.Black;
+                thisImage.Source = _blackImage;
+                break;
+            default:
+                throw new NeverException("Invalid this turn.");
+        }
     }
 
     private void ShowMove(MoveResult move)
     {
-        ShowMove(move.X, move.Y);
         if (move.Winner != GoBangTurnType.Null)
         {
             if (move.Winner == GoBangTurnType.Tie)
@@ -98,9 +100,10 @@ public partial class GameWindow : Window
             }
             Close();
         }
+        else ShowMove(move.X, move.Y);
     }
 
-    private void ContinueTask(Task<MoveResult> t)
+    private void ContinueTask(Task<MoveResult?> t)
     {
         Dispatcher.Invoke(() =>
         {
@@ -110,7 +113,9 @@ public partial class GameWindow : Window
                 Close();
                 return;
             }
-            ShowMove(t.Result);
+            var res = t.Result;
+            if (res == null) return;
+            ShowMove(res);
         });
     }
 }

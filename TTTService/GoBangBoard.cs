@@ -2,7 +2,7 @@ namespace TTTService;
 
 internal class GoBangBoard
 {
-    private readonly GoBangTurnType[][] _board;
+    private readonly GoBangTurnType[,] _board;
 
     /// <summary>
     /// 用户看到的row。
@@ -31,8 +31,7 @@ internal class GoBangBoard
         //多开4行列为了判断好写点
         row += 4;
         column += 4;
-        _board = new GoBangTurnType[row][];
-        Array.Fill(_board, new GoBangTurnType[column]);
+        _board = new GoBangTurnType[row,column];
         NextTurnType = GoBangTurnType.Black;
     }
 
@@ -42,7 +41,7 @@ internal class GoBangBoard
     /// <param name="i"></param>
     /// <param name="j"></param>
     /// <returns></returns>
-    public GoBangTurnType this[int i, int j] => _board[i][j];
+    public GoBangTurnType this[int i, int j] => _board[i,j];
 
     //public GoBangTurnType this[Index x, Index y] => _board[x][y];
     //public GoBangTurnType[][] this[Range x, Range y] => _board[x][y];
@@ -55,14 +54,9 @@ internal class GoBangBoard
     /// <returns>Move successfully.</returns>
     public bool Move(int row, int column)
     {
-        if (row >= Row + 2 || row <= 1 || column >= Column + 2 || column <= 1 || _board[row][column] != GoBangTurnType.Null) return false;
-        _board[row][column] = NextTurnType;
-        NextTurnType = NextTurnType switch
-        {
-            GoBangTurnType.White => GoBangTurnType.Black,
-            GoBangTurnType.Black => GoBangTurnType.White,
-            _ => throw new NeverException("Nextturn type invalid.")
-        };
+        if (row >= Row + 2 || row <= 1 || column >= Column + 2 || column <= 1 || _board[row,column] != GoBangTurnType.Null) return false;
+        _board[row,column] = NextTurnType;
+        NextTurnType = NextTurnType.Opposite();
         return true;
     }
 }

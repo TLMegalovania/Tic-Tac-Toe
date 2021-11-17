@@ -23,10 +23,10 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
         </Grid>
-        <Label Content="Your Side:" Margin="76,322,618,228" FontSize="20"/>
-        <Label Content="It's Now:" Margin="76,105,618,445" FontSize="20"/>
-        <Image x:Name="thisImage" Margin="76,168,624,317"/>
-        <Image x:Name="yourImage" Margin="76,391,624,94"/>
+        <Label Content="Your Side:" Margin="76,319,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18"/>
+        <Label Content="It's Now:" Margin="76,106,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18"/>
+        <Image x:Name="thisImage" Margin="76,168,0,0" HorizontalAlignment="Left" Width="100" Height="100" VerticalAlignment="Top"/>
+        <Image x:Name="yourImage" Margin="76,391,0,0" Height="100" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100"/>
 
     </Grid>
 </Window>
