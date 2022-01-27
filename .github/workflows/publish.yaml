@@ -1,0 +1,24 @@
+name: Build & Publish
+on:
+  push:
+    tags: ["v*"]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.0.x"
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: publish
+        run: dotnet publish Tic-Tac-Toe/Tic-Tac-Toe.csproj -c Release -o publish
+      - uses: thedoctor0/zip-release@master
+        with:
+          path: publish
+          filename: Tic-Tac-Toe.zip
+      - uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: Tic-Tac-Toe.zip

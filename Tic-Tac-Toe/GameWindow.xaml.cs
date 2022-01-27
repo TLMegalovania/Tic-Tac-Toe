@@ -24,8 +24,8 @@ public partial class GameWindow : Window
     {
         InitializeComponent();
         _client = client;
-        _blackImage = new(new("./Images/black.gif", UriKind.Relative));
-        _whiteImage = new(new("./Images/white.gif", UriKind.Relative));
+        _blackImage = new(new("/Images/black.gif", UriKind.Relative));
+        _whiteImage = new(new("/Images/white.gif", UriKind.Relative));
         _blackBrush = new(_blackImage);
         _whiteBrush = new(_whiteImage);
         thisTurn = GoBangTurnType.Black;
