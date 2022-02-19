@@ -37,8 +37,15 @@ public partial class ConnectWindow : Window
                 {
                     MessageBox.Show(t.Exception!.GetBaseException().Message);
                 }
-                else if (t.IsCanceled) return;
-                else DialogResult = true;
+                else if (t.IsCanceled)
+                {
+                    return;
+                }
+                else
+                {
+                    DialogResult = true;
+                }
+
                 Close();
             });
         });

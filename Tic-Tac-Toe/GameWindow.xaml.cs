@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 using TTTOnline;
 
@@ -14,33 +14,35 @@ namespace Tic_Tac_Toe;
 public partial class GameWindow : Window
 {
     private readonly GoBangClient _client;
-    private readonly ImageBrush _blackBrush, _whiteBrush;
-    private readonly BitmapImage _blackImage, _whiteImage;
+    private readonly ImageSource _blackImage, _whiteImage;
     private GoBangTurnType thisTurn;
     private readonly GoBangTurnType yourTurn;
-    private readonly (Button,bool)[,] _board;
+    // Rectangle if null, else Image.
+    private readonly FrameworkElement[,] _board;
 
     public GameWindow(GoBangClient client, bool isClient = false)
     {
         InitializeComponent();
         _client = client;
-        _blackImage = new(new("/Images/black.gif", UriKind.Relative));
-        _whiteImage = new(new("/Images/white.gif", UriKind.Relative));
-        _blackBrush = new(_blackImage);
-        _whiteBrush = new(_whiteImage);
+        // Forced convention.
+        _blackImage = (ImageSource)Resources["Black"];
+        _whiteImage = (ImageSource)Resources["White"];
         thisTurn = GoBangTurnType.Black;
         yourTurn = isClient ? GoBangTurnType.White : GoBangTurnType.Black;
-        _board = new (Button,bool)[5, 5];
+        _board = new FrameworkElement[5, 5];
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 5; j++)
             {
-                Button btn = new();
-                btn.Click += ClickBoard;
-                _board[i, j] = (btn,true);
-                Grid.SetRow(btn, i);
-                Grid.SetColumn(btn, j);
-                boardGrid.Children.Add(btn);
+                Rectangle idle = new()
+                {
+                    Fill = Brushes.AliceBlue
+                };
+                idle.MouseLeftButtonDown += ClickBoard;
+                _board[i, j] = idle;
+                boardGrid.Children.Add(idle);
+                Grid.SetRow(idle, i);
+                Grid.SetColumn(idle, j);
             }
         }
         thisImage.Source = _blackImage;
@@ -54,26 +56,53 @@ public partial class GameWindow : Window
 
     private void ClickBoard(object sender, RoutedEventArgs e)
     {
-        if (sender is not UIElement ele) throw new NeverException("Not clicking UIElement.");
-        if (thisTurn != yourTurn) return;
+        if (sender is not UIElement ele)
+        {
+            throw new NeverException("Not clicking UIElement.");
+        }
+
+        if (thisTurn != yourTurn)
+        {
+            return;
+        }
+
+        if (ele is not Rectangle)
+        {
+            return;
+        }
+
         int row = Grid.GetRow(ele), col = Grid.GetColumn(ele);
-        if (!_board[row, col].Item2) return;
         ShowMove(row, col);
         _client.MoveAsync(row, col).ContinueWith(ContinueTask);
+
     }
 
     private void ShowMove(int x, int y)
     {
-        _board[x, y].Item2 = false;
+        Image thei;
+        FrameworkElement? ele = _board[x, y];
+        switch (ele)
+        {
+            case Image i:
+                thei = i;
+                break;
+            default:
+                boardGrid.Children.Remove(ele);
+                thei = new();
+                Grid.SetRow(thei, x);
+                Grid.SetColumn(thei, y);
+                boardGrid.Children.Add(thei);
+                break;
+        }
         switch (thisTurn)
         {
             case GoBangTurnType.Black:
-                _board[x, y].Item1.Background = _blackBrush;
+                thei.Source = _blackImage;
                 thisTurn = GoBangTurnType.White;
                 thisImage.Source = _whiteImage;
                 break;
             case GoBangTurnType.White:
-                _board[x, y].Item1.Background = _whiteBrush;
+                thei.Source = _whiteImage;
                 thisTurn = GoBangTurnType.Black;
                 thisImage.Source = _blackImage;
                 break;
@@ -100,7 +129,10 @@ public partial class GameWindow : Window
             }
             Close();
         }
-        else ShowMove(move.X, move.Y);
+        else
+        {
+            ShowMove(move.X, move.Y);
+        }
     }
 
     private void ContinueTask(Task<MoveResult?> t)
@@ -113,8 +145,12 @@ public partial class GameWindow : Window
                 Close();
                 return;
             }
-            var res = t.Result;
-            if (res == null) return;
+            MoveResult? res = t.Result;
+            if (res == null)
+            {
+                return;
+            }
+
             ShowMove(res);
         });
     }

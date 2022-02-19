@@ -6,6 +6,10 @@
         xmlns:local="clr-namespace:Tic_Tac_Toe"
         mc:Ignorable="d"
         Title="Tic-Tac-Toe" Height="600" Width="800" MinWidth="400" MinHeight="300">
+    <Window.Resources>
+        <BitmapImage x:Key="Black" UriSource="/Images/black.gif" />
+        <BitmapImage x:Key="White" UriSource="/Images/white.gif" />
+    </Window.Resources>
     <Grid>
         <Grid x:Name="boardGrid" Margin="280,42.38,20,42.38" ShowGridLines="True">
             <Grid.RowDefinitions>

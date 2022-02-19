@@ -18,20 +18,24 @@ public partial class MainWindow : Window
     {
         GoBangServer server = new();
         CancellationTokenSource source = new();
-        var clientTask = server.GetClientAsync(source.Token);
+        Task<GoBangClient>? clientTask = server.GetClientAsync(source.Token);
         /// Ugly.
         /// TODO: refactor
-        var endpoint4 = (IPEndPoint)server.Listener4.LocalEndpoint;
-        var endpoint6 = (IPEndPoint)server.Listener6.LocalEndpoint;
-        var response = new ConnectWindow(clientTask, endpoint4.Port, endpoint6.Port, source).ShowDialog();
-        if (response is null or false) return;
+        IPEndPoint? endpoint4 = (IPEndPoint)server.Listener4.LocalEndpoint;
+        IPEndPoint? endpoint6 = (IPEndPoint)server.Listener6.LocalEndpoint;
+        bool? response = new ConnectWindow(clientTask, endpoint4.Port, endpoint6.Port, source).ShowDialog();
+        if (response is null or false)
+        {
+            return;
+        }
+
         new GameWindow(clientTask.Result).Show();
         Close();
     }
 
     private void ConnectHost(object sender, RoutedEventArgs e)
     {
-        if (!IPAddress.TryParse(ipBox.Text, out var address))
+        if (!IPAddress.TryParse(ipBox.Text, out IPAddress? address))
         {
             MessageBox.Show("Invalid IP.");
             return;
@@ -43,9 +47,13 @@ public partial class MainWindow : Window
         }
         GoBangClient client = new();
         CancellationTokenSource source = new();
-        var connectTask = client.ConnectAsync(address, port, source.Token);
-        var response = new ConnectWindow(connectTask, source).ShowDialog();
-        if (response is null or false) return;
+        Task<GameMessage>? connectTask = client.ConnectAsync(address, port, source.Token);
+        bool? response = new ConnectWindow(connectTask, source).ShowDialog();
+        if (response is null or false)
+        {
+            return;
+        }
+
         new GameWindow(client, client.ReceiveMoveAsync()).Show();
         Close();
     }
